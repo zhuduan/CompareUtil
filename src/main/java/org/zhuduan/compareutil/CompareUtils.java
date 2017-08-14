@@ -204,13 +204,22 @@ public class CompareUtils {
         return ( iterator1.hasNext() || iterator2.hasNext() );
     }
     
-    private boolean isMapDifferent(Map map1, Map map2){
+    private boolean isMapDifferent(Map map1, Map map2) throws CompareException{
         if ( skipMap ){
             return false;
         }
         
-        // TODO:
-        return false;
+        // use the Set<Entry> in Map, to do the compare
+        Iterator iterator1 = map1.entrySet().iterator();
+        Iterator iterator2 = map2.entrySet().iterator();
+        while (iterator1.hasNext() && iterator2.hasNext()) {
+            Object o1 = iterator1.next();
+            Object o2 = iterator2.next();
+            if ( isDifferent(o1, o2) ) {
+                return true;
+            }
+        }
+        return ( iterator1.hasNext() || iterator2.hasNext() );
     }
     
     public static void main(String args[]){

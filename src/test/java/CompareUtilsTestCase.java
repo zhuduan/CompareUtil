@@ -11,7 +11,9 @@ import org.zhuduan.compareutil.common.NotCompare;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * UT test for compareUtils
@@ -204,6 +206,59 @@ public class CompareUtilsTestCase {
         compareUtils.includeCollection();
     }
 
+    @Test
+    public void testIsDifferent_SkipMap() throws Exception {
+        Map<Object, Object> map1 = new HashMap<>();
+        map1.put("childSimple1", childSimple1);
+        
+        Map<Object, Object> map2 = new HashMap<>();
+        map2.put("childSimple2", childSimple2);
+
+        Parent_Map parent_Map1 = new Parent_Map(1,"p1", map1);
+        Parent_Map parent_Map2 = new Parent_Map(1,"p1", map2);
+        compareUtils.ignoreMap();
+        Assert.assertTrue(!compareUtils.isDifferent(parent_Map1, parent_Map2));
+        compareUtils.includeCollection();
+    }
+
+    @Test
+    public void testIsDifferent_SubMap() throws Exception {
+        Map<Object,Object> map1 = new HashMap<>();
+        map1.put("childSimple1",childSimple1);
+
+        Map<Object,Object> map1_DiffKey = new HashMap<>();
+        map1_DiffKey.put("childSimple1_1",childSimple1);
+
+        Map<Object,Object> map1_DiffValue = new HashMap<>();
+        map1_DiffValue.put("childSimple1",childSimple2);
+
+        Map<Object,Object> map1_DiffNum = new HashMap<>();
+        map1_DiffNum.put("childSimple1",childSimple1);
+        map1_DiffNum.put("childSimple2",childSimple1);
+
+        Map<Object,Object> map2 = new HashMap<>();
+        map2.put("childSimple1",childSimple1);
+        
+        Parent_Map pmap1 = new Parent_Map(1,"p1", map1);
+        Parent_Map pmap1_key = new Parent_Map(1,"p1", map1_DiffKey);
+        Parent_Map pmap1_value = new Parent_Map(1,"p1", map1_DiffValue);
+        Parent_Map pmap1_num = new Parent_Map(1,"p1", map1_DiffNum);
+        Parent_Map pmap2 = new Parent_Map(1,"p1", map1);
+        
+        Assert.assertTrue(!compareUtils.isDifferent(pmap1, pmap2));
+        Assert.assertTrue(compareUtils.isDifferent(pmap1, pmap1_key));
+        Assert.assertTrue(compareUtils.isDifferent(pmap1, pmap1_value));
+        Assert.assertTrue(compareUtils.isDifferent(pmap1, pmap1_num));
+
+        Map<Object,Object> emptyMap1 = new HashMap<>();
+        Map<Object,Object> emptyMap2 = new HashMap<>();
+        Parent_Map pmap_empty1 = new Parent_Map(1,"p1", emptyMap1);
+        Parent_Map pmap_empty2 = new Parent_Map(1,"p1", emptyMap2);
+
+        Assert.assertTrue(!compareUtils.isDifferent(pmap_empty1, pmap_empty2));
+        Assert.assertTrue(compareUtils.isDifferent(pmap_empty1, pmap1));
+    }
+
     class ParentSimple{
         int id;
         String name;
@@ -232,6 +287,18 @@ public class CompareUtilsTestCase {
         List<ChildSimple> children;
 
         public Parent_List(int id, String name, List<ChildSimple> children) {
+            this.id = id;
+            this.name = name;
+            this.children = children;
+        }
+    }
+
+    class Parent_Map{
+        int id;
+        String name;
+        Map<Object,Object> children;
+
+        public Parent_Map(int id, String name, Map<Object,Object> children) {
             this.id = id;
             this.name = name;
             this.children = children;
