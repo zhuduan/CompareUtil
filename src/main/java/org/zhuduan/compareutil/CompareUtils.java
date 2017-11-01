@@ -98,7 +98,7 @@ public class CompareUtils {
         return object1.getClass().getTypeName().equals(object2.getClass().getTypeName());
     }
 
-    /* if add @NotCompare Annotation, means not do the compare */
+    /* if add @NotConvert Annotation, means not do the compare */
     private boolean isNotCompare(Field field){
         Annotation annotations[] = field.getAnnotations();
         for ( Annotation annotation : annotations ){
