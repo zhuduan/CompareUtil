@@ -2,6 +2,9 @@ import org.junit.Test;
 import org.zhuduan.convertor.ConvertUtils;
 import org.zhuduan.convertor.common.NotConvert;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -12,73 +15,28 @@ import static org.junit.Assert.assertEquals;
  */
 public class ConvertUtilsTestCase {
 
-    class Other{
-        private int id =0;
-
-        public Other(int id) {
-            this.id = id;
-        }
-
-        @Override
-        public String toString(){
-            return "otherID="+id;
-        }
-    }
-    
-    class Source {
-        private Integer id;
-        
-        private String name;
-        
-        private String title;
-        
-        private Other other;
-
-        public Source(Integer id, String name, String title, Other other) {
-            this.id = id;
-            this.name = name;
-            this.title = title;
-            this.other = other;
-        }
-    }
-    
-    class Target {
-        private Integer id;
-        
-        private String noName;
-        
-        @NotConvert
-        private String title;
-        
-        private Other other;
-        
-        @Override
-        public String toString(){
-            StringBuilder sb = new StringBuilder();
-            sb.append("id=").append(this.id).append(",")
-                    .append("noName=").append(this.noName).append(",")
-                    .append("title=").append(this.title).append(",")
-                    .append("other=").append(this.other.toString()).append(",");
-            return sb.toString();
-        }
-
-        public Target(Integer id, String noName, String title, Other other) {
-            this.id = id;
-            this.noName = noName;
-            this.title = title;
-            this.other = other;
-        }
-    }
-    
     @Test
     public void testConvert4Single() throws Exception {
-        Source source = new Source(1, "hello", "world", new Other(999));
-        Target realTarget = new Target(1, null, null, new Other(999));
-        Target convertTarget = ConvertUtils.convert(source, Target.class);
+        ConvertSource source = new ConvertSource(1, "hello", "world", new ConvertOther(999));
+        ConvertTarget realTarget = new ConvertTarget(1, null, null, new ConvertOther(999));
+        ConvertTarget convertTarget = ConvertUtils.convert(source, ConvertTarget.class);
         assertEquals(realTarget.toString(), convertTarget.toString());
     }
 
     @Test
     public void testConvert4List() throws Exception {
+        List<ConvertSource> sourceList = new ArrayList<>();
+        List<ConvertTarget> realTargetList = new ArrayList<>();
+        List<ConvertTarget> convertTargetList = ConvertUtils.convert(sourceList, ConvertTarget.class);
+        assertEquals(realTargetList.size(), convertTargetList.size());
+        
+        sourceList.add(new ConvertSource(1, "hello", "world", new ConvertOther(999)));
+        sourceList.add(new ConvertSource(2, "hello", "world", new ConvertOther(998)));
+        realTargetList.add(new ConvertTarget(1, null, null, new ConvertOther(999)));
+        realTargetList.add(new ConvertTarget(2, null, null, new ConvertOther(998)));
+        convertTargetList = ConvertUtils.convert(sourceList, ConvertTarget.class);
+        for ( int i=0; i<convertTargetList.size(); i++ ){
+            assertEquals(realTargetList.get(i).toString(), convertTargetList.get(i).toString());
+        }
     }
 }

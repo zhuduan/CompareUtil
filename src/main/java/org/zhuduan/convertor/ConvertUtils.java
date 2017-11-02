@@ -30,7 +30,7 @@ public class ConvertUtils {
     public static <T extends Object, V extends Object> V convert(T dataSource, Class<V> targetType) throws Exception{
         try {
             Field fields[] = targetType.getDeclaredFields();
-            V targetObject = (V) Class.forName(targetType.getName());
+            V targetObject = targetType.newInstance();
             
             for (Field targetField : fields) {
                 if ( isNotConvert(targetField) ){
@@ -56,10 +56,9 @@ public class ConvertUtils {
                 
                 targetField.setAccessible(true);
                 sourceField.setAccessible(true);
-                System.out.println(targetFieldType+"="+targetFieldType.cast(sourceField.get(dataSource)));
                 
                 // TODO: fix here
-                targetField.set(targetObject, targetFieldType.cast(sourceField.get(dataSource)));
+                targetField.set(targetObject, sourceField.get(dataSource));
             }
             return targetObject;
         } catch (Exception exp){
