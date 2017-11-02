@@ -11,6 +11,8 @@ public class ConvertTarget {
     private Integer id;
 
     private String noName;
+    
+    private int name = -1;
 
     @NotConvert
     private String title;
