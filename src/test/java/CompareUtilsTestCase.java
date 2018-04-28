@@ -10,6 +10,7 @@ import org.zhuduan.compareutil.common.NotCompare;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,6 +67,13 @@ public class CompareUtilsTestCase {
         Assert.assertTrue(compareUtils.isDifferent(BigDecimal.ONE,BigDecimal.ZERO));
         Assert.assertTrue(compareUtils.isDifferent(BigDecimal.ONE,BigDecimal.TEN));
         Assert.assertTrue(!compareUtils.isDifferent(BigDecimal.ONE,BigDecimal.ONE));
+        
+        BigDecimal zeroScale0 = BigDecimal.ZERO;
+        BigDecimal zeroScale2 = new BigDecimal("0.00");
+        BigDecimal oneScale2 = new BigDecimal("1.00");
+        Assert.assertTrue(!compareUtils.isDifferent(zeroScale0, zeroScale2));
+        Assert.assertTrue(!compareUtils.isDifferent(zeroScale0, zeroScale0));
+        Assert.assertTrue(compareUtils.isDifferent(zeroScale2, oneScale2));
     }
 
     @Test

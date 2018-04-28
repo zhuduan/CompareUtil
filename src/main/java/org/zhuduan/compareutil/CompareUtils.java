@@ -5,6 +5,7 @@ import org.zhuduan.compareutil.common.NotCompare;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -144,6 +145,11 @@ public class CompareUtils {
     }
     
     private boolean isPrimitiveDifferent(Object object1, Object object2){
+        // the BigDecimal should use compare method rather than equal
+        if( object1 instanceof BigDecimal && object2 instanceof BigDecimal){
+            return ((BigDecimal) object1).compareTo((BigDecimal) object2)!=0;
+        }
+        
         return !object1.equals(object2);
     }
 
